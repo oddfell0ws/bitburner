@@ -1,0 +1,74 @@
+function myMoney() {
+    return getServerMoneyAvailable("home");
+}
+
+disableLog("getServerMoneyAvailable");
+disableLog("sleep");
+
+var cnt = 40;
+var level = 200;
+var ram = 64;
+var cores = 16;
+var done = 0;
+while(true) {
+    done = 0;
+    if(hacknet.numNodes() < cnt) {
+        res = hacknet.purchaseNode();
+        print("Purchased hacknet Node with index " + res);
+
+    } else {
+        done = done + 1;
+    };
+
+    for (var i = 0; i < hacknet.numNodes(); i++) {
+        if (hacknet.getNodeStats(i).level <= level) {
+            if (hacknet.getNodeStats(i).level <= 20) {
+                var toBuy = 1;
+            } else {
+                var toBuy = 10;
+            }
+            var cost = hacknet.getLevelUpgradeCost(i, toBuy);
+            if (myMoney() < cost) {
+                print("Need $" + cost + " . Have $" + myMoney());
+                sleep(3000);
+            }
+            res = hacknet.upgradeLevel(i, toBuy);
+        } else {
+            done = done + 1;
+        };
+    }
+
+    print("All nodes upgraded to level " + level);
+
+    for (var i = 0; i < hacknet.numNodes(); i++) {
+        if (hacknet.getNodeStats(i).ram < ram) {
+            var cost = hacknet.getRamUpgradeCost(i, 2);
+            if (myMoney() < cost) {
+                print("Need $" + cost + " . Have $" + myMoney());
+                sleep(3000);
+            }
+            res = hacknet.upgradeRam(i, 2);
+        } else {
+            done = done + 1;
+        };
+    };
+
+    print("All nodes upgraded to " + ram +"GB RAM");
+
+    for (var i = 0; i < hacknet.numNodes(); i++) {
+        if (hacknet.getNodeStats(i).cores < cores) {
+            var cost = hacknet.getCoreUpgradeCost(i, 1);
+            if (myMoney() < cost) {
+                print("Need $" + cost + " . Have $" + myMoney());
+                sleep(3000);
+            }
+            res = hacknet.upgradeCore(i, 1);
+        } else {
+            done = done + 1;
+        };
+    };
+    if (done >= ((cnt * 3) +1)) {
+        exit();
+    };
+    print("All nodes upgraded to " + cores + " cores");
+}
