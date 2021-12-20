@@ -1,10 +1,11 @@
-/** @param {NS} ns **/
 function allowance(ns, rate) {
 	return ns.getPlayer().money * rate;
 }
 
+/** @param {NS} ns **/
 export async function main(ns) {
-	var rate = 0.05
+	var rate = ns.args[0] ?? 0.05;
+	ns.tprint(`Starting Hacknet with allowence rate: ${rate}`);
 	if (ns.hacknet.numNodes() === 0) {
 		ns.hacknet.purchaseNode();
 	}
@@ -117,6 +118,6 @@ export async function main(ns) {
 			}
 		}
 
-		await ns.sleep(5000);
+		await ns.sleep(1000);
 	}
 }
