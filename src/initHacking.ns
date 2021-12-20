@@ -1,4 +1,4 @@
-const baseUrl = 'https://raw.githubusercontent.com/oddfell0w/bitburner/main/src/'
+const baseUrl = 'https://raw.githubusercontent.com/oddfell0ws/bitburner/main/src/'
 const filesToDownload = [
   'common.ns',
   'mainHack.ns',
@@ -10,7 +10,7 @@ const filesToDownload = [
   'killAll.ns',
   'runHacking.ns',
   'find.ns',
-  'hackNet.ns',
+  'hackNet.script',
 ]
 const valuesToRemove = ['BB_SERVER_MAP']
 
