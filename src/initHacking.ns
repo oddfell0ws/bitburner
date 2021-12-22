@@ -1,15 +1,13 @@
 const baseUrl = 'https://raw.githubusercontent.com/oddfell0ws/bitburner/main/src/'
 const filesToDownload = [
-  'common.ns',
-  'mainHack.ns',
-  'spider.ns',
-  'grow.ns',
-  'hack.ns',
-  'weaken.ns',
+  'controller.js',
+  'xpfarm.js',
+  'grow.js',
+  'hack.js',
+  'weaken.js',
   'playerServers.ns',
   'killAll.ns',
-  'runHacking.ns',
-  'find.ns',
+  'stats.ns',
   'hackNet.script',
 ]
 const valuesToRemove = ['BB_SERVER_MAP']
@@ -44,5 +42,5 @@ export async function main(ns) {
   valuesToRemove.map((value) => localStorage.removeItem(value))
 
   ns.tprint(`[${localeHHMMSS()}] Spawning killAll.ns`)
-  ns.spawn('killAll.ns', 1, 'runHacking.ns')
+  ns.spawn('killAll.ns', 1, 'controller.js')
 }

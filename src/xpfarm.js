@@ -1,7 +1,8 @@
 const settings = {
-    homeRamReserved: 64,
+    extraSleepTime: 100,
+    homeRamReserved: 32,
     expFarmTarget: "joesguns",
-    attackScripts: ["hackTs.js", "growTs.js", "weakenTs.js"],
+    attackScripts: ["hack.js", "grow.js", "weaken.js"],
 };
 export async function main(ns) {
     const servers = {};
@@ -64,20 +65,22 @@ export async function main(ns) {
     };
     while (true) {
         const expFarmTime = ns.getWeakenTime(settings.expFarmTarget);
-        const sleepInterval = expFarmTime + 30;
+        const sleepInterval = expFarmTime + settings.extraSleepTime;
         await explore();
         let hackingNodes = Object.values(servers).filter(s => s.hasRootAccess);
         hackingNodes.forEach(node => {
             const availableRam = node.maxRam - ns.getServerUsedRam(node.host);
             node.availableCycles = Math.floor(availableRam / 1.75);
+            if (node.host == "home") {
+                node.availableCycles -= Math.max(Math.ceil(settings.homeRamReserved / 1.75), 0);
+            }
         });
         hackingNodes = hackingNodes.filter(node => node.availableCycles > 0);
         const totalCycles = hackingNodes.reduce((sum, node) => sum + node.availableCycles, 0);
         for (const node of hackingNodes) {
-            executeAttackAction("weakenTs.js", node.host, settings.expFarmTarget, node.availableCycles, 0);
+            executeAttackAction("weaken.js", node.host, settings.expFarmTarget, node.availableCycles, 0);
         }
         ns.tprint(`Exp farming with ${totalCycles} cycles on ${hackingNodes.length} nodes. Waking up in ${ns.tFormat(sleepInterval)}.`);
         await ns.asleep(sleepInterval);
     }
-}
-;
+};
