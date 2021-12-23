@@ -320,6 +320,7 @@ export async function main(ns) {
     };
     ns.tprint("Starting controller.");
     while (true) {
+        ns.tprint('***********************************************************************************************');
         const servers = await explore(ns);
         const hackingNodes = getHackingNodes(servers);
         const capacity = calculateAvailableCycles(ns, hackingNodes);
@@ -337,6 +338,7 @@ export async function main(ns) {
         }
         const postruncapacity = calculateAvailableCycles(ns, hackingNodes);
         ns.tprint(`Post-attack capacity: ${postruncapacity}.`);
+        ns.tprint('***********************************************************************************************');
         await expFarm(ns, hackingNodes, attackResetAt);
     }
 }
