@@ -14,10 +14,10 @@ const settings = {
     },
     earlyGame: {
         threshhold: 10000,
-        timeCap: 2 * 60 * 1000,
+        timeCap: 10 * 60 * 1000,
     },
     timeCap: 10 * 60 * 1000,
-    targetServerCount: 10,
+    targetServerCount: 30,
     harvestPercent: 0.25,
     homeRamReserved: 64,
     changes: {
@@ -204,8 +204,11 @@ export async function main(ns) {
         const calculatePrepare = (cycles, target) => {
             let cyclesAvailable = cycles;
             const secLevel = ns.getServerSecurityLevel(target.host);
-            const money = ns.getServerMoneyAvailable(target.host);
+            let money = ns.getServerMoneyAvailable(target.host);
             const weakenCount = Math.ceil((secLevel - target.minSecurityLevel) / settings.changes.weaken);
+            if (money === 0) {
+                money = 1;
+            }
             const growCount = Math.ceil(ns.growthAnalyze(target.host, target.maxMoney / money));
             const additionalWeakenCount = weakenCyclesForGrow(growCount);
             //ns.tprint(`${target.host} needs ${weakenCount} weaken cycles, ${growCount} grow cycles and ${additionalWeakenCount} additional weaken cycles.`);
