@@ -42,5 +42,5 @@ export async function main(ns) {
   valuesToRemove.map((value) => localStorage.removeItem(value))
 
   ns.tprint(`[${localeHHMMSS()}] Spawning killAll.ns`)
-  ns.spawn('killAll.ns', 1, 'controller.js')
+  ns.spawn('controller.js', 1)
 }
