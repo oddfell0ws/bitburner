@@ -1,8 +1,8 @@
 {
-	"filesToDownload": [
-		"/oddfell0ws/controller.js",
+    "filesToDownload": [
+        "/oddfell0ws/controller.js",
         "/oddfell0ws/contracts.js",
-		"/oddfell0ws/privateServers.js",
+        "/oddfell0ws/privateServers.js",
         "/oddfell0ws/xpfarm.js",
         "/oddfell0ws/attack/weaken.js",
         "/oddfell0ws/attack/hack.js",
@@ -12,5 +12,5 @@
         "/oddfell0ws/misc/hackNet.script",
         "/os_install.js",
         "/gui_install.js",
-	]
+    ]
 }
