@@ -11,6 +11,6 @@
         "/oddfell0ws/misc/hacknetUpgrade.js",
         "/oddfell0ws/misc/hackNet.script",
         "os_install.js",
-        "gui_install.js",
+        "gui_install.js"
     ]
 }
