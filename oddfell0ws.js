@@ -65,5 +65,5 @@ async function githubReq(ns, filepath, saveFilepath) {
     let url = baseURL + owner + "/" + repo + "/" + branch + "/" + filepath;
 
     ns.print("Request to: " + url);
-    await ns.wget(url, saveFilepath)
+    await ns.wget(url + '?ts=' + new Date().getTime(), saveFilepath)
 }
