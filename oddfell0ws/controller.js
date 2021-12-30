@@ -14,7 +14,8 @@ const settings = {
     },
     earlyGame: {
         threshhold: 10000,
-        timeCap: 10 * 60 * 1000,
+        timeCap: 4 * 60 * 1000,
+        harvestPercent: 0.05,
     },
     timeCap: 10 * 60 * 1000,
     targetServerCount: 30,
@@ -25,7 +26,11 @@ const settings = {
         grow: 0.004,
         weaken: 0.05,
     },
-    attackScripts: ["hack.js", "grow.js", "weaken.js"],
+    attackScripts: [
+        "/oddfell0ws/attack/hack.js",
+        "/oddfell0ws/attack/grow.js",
+        "/oddfell0ws/attack/weaken.js"
+    ],
     expFarmTarget: "joesguns",
 };
 export function msToString(ms = 0) {
@@ -122,7 +127,7 @@ async function expFarm(ns, hackingNodes, stopTime) {
         const activeNodes = hackingNodes.filter((node) => node.availableCycles > 0);
         if (!DEBUG.dryrun) {
             for (const node of activeNodes) {
-                executeAttackAction(ns, "weaken.js", node.host, settings.expFarmTarget, node.availableCycles, 0);
+                executeAttackAction(ns, settings.attackScripts[2], node.host, settings.expFarmTarget, node.availableCycles, 0);
             }
         }
         if (DEBUG.expFarm) {
@@ -285,7 +290,7 @@ export async function main(ns) {
                 }
                 if (cyclesNeeded.weaken > 0 && node.availableCycles > 0) {
                     const count = Math.min(cyclesNeeded.weaken, node.availableCycles);
-                    executeAttackAction(ns, "weaken.js", node.host, target.host, count, 0);
+                    executeAttackAction(ns, settings.attackScripts[2], node.host, target.host, count, 0);
                     cycles -= count;
                     node.availableCycles -= count;
                     cyclesNeeded.weaken -= count;
@@ -296,7 +301,7 @@ export async function main(ns) {
                 }
                 if (cyclesNeeded.grow > 0 && node.availableCycles > 0) {
                     const count = Math.min(cyclesNeeded.grow, node.availableCycles);
-                    executeAttackAction(ns, "grow.js", node.host, target.host, count, actionTimes.growDelay);
+                    executeAttackAction(ns, settings.attackScripts[1], node.host, target.host, count, actionTimes.growDelay);
                     cycles -= count;
                     node.availableCycles -= count;
                     cyclesNeeded.grow -= count;
@@ -307,7 +312,7 @@ export async function main(ns) {
                 }
                 if (cyclesNeeded.additionalWeakens > 0 && node.availableCycles > 0) {
                     const count = Math.min(cyclesNeeded.additionalWeakens, node.availableCycles);
-                    executeAttackAction(ns, "weaken.js", node.host, target.host, count, actionTimes.additionalWeakenDelay);
+                    executeAttackAction(ns, settings.attackScripts[2], node.host, target.host, count, actionTimes.additionalWeakenDelay);
                     cycles -= count;
                     node.availableCycles -= count;
                     cyclesNeeded.additionalWeakens -= count;
@@ -349,8 +354,13 @@ export function getHackingNodes(servers) {
     return Object.values(servers).filter((s) => s.hasRootAccess);
 }
 function createHWGWBatch(ns, target) {
-    const hackCycles = hackThreadsNeededToSteal(ns, target.host, settings.harvestPercent);
-    const growCycles = Math.ceil(ns.growthAnalyze(target.host, 1 / (1 - settings.harvestPercent)) * settings.hwgwBatches.safetyFactor);
+    if (capacity > settings.earlyGame.threshhold) {
+        let harvestPercent = settings.harvestPercent;
+    } else {
+        let harvestPercent = settings.earlyGame.harvestPercent;
+    }
+    const hackCycles = hackThreadsNeededToSteal(ns, target.host, harvestPercent);
+    const growCycles = Math.ceil(ns.growthAnalyze(target.host, 1 / (1 - harvestPercent)) * settings.hwgwBatches.safetyFactor);
     const weakenForHack = weakenCyclesForHack(hackCycles, settings.hwgwBatches.safetyFactor);
     const weakenForGrow = weakenCyclesForGrow(growCycles, settings.hwgwBatches.safetyFactor);
     return {
@@ -370,7 +380,7 @@ async function runBatch(ns, target, hackingNodes, batch, delay, actionTimes, bat
         }
         const count = Math.min(hackCycles, node.availableCycles);
         if (count > 0) {
-            executeAttackAction(ns, "hack.js", node.host, target, count, delay + actionTimes.hackDelay);
+            executeAttackAction(ns, settings.attackScripts[0], node.host, target, count, delay + actionTimes.hackDelay);
             hackCycles -= count;
             node.availableCycles -= count;
         }
@@ -382,7 +392,7 @@ async function runBatch(ns, target, hackingNodes, batch, delay, actionTimes, bat
         }
         const count = Math.min(weakenForHack, node.availableCycles);
         if (count > 0) {
-            executeAttackAction(ns, "weaken.js", node.host, target, count, delay);
+            executeAttackAction(ns, settings.attackScripts[2], node.host, target, count, delay);
             weakenForHack -= count;
             node.availableCycles -= count;
         }
@@ -394,7 +404,7 @@ async function runBatch(ns, target, hackingNodes, batch, delay, actionTimes, bat
         }
         const count = Math.min(growCycles, node.availableCycles);
         if (count > 0) {
-            executeAttackAction(ns, "grow.js", node.host, target, count, delay + actionTimes.growDelay);
+            executeAttackAction(ns, settings.attackScripts[1], node.host, target, count, delay + actionTimes.growDelay);
             growCycles -= count;
             node.availableCycles -= count;
         }
@@ -406,7 +416,7 @@ async function runBatch(ns, target, hackingNodes, batch, delay, actionTimes, bat
         }
         const count = Math.min(weakenForGrow, node.availableCycles);
         if (count > 0) {
-            executeAttackAction(ns, "weaken.js", node.host, target, count, delay + 20);
+            executeAttackAction(ns, settings.attackScripts[2], node.host, target, count, delay + 20);
             weakenForGrow -= count;
             node.availableCycles -= count;
         }

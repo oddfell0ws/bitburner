@@ -12,21 +12,6 @@ The script can be slow to get going, but it'll get there eventually. Getting acc
 
 ## Instalation
 
-1. Create a new script called `start.ns` by issuing the following command: `nano start.ns`. Make sure you're on your home server if you're not (you can quickly go home by running `home` in the console).
-2. Paste the following content:
-
-```javascript
-export async function main(ns) {
-  if (ns.getHostname() !== "home") {
-    throw new Exception("Run the script from home");
-  }
-
-  await ns.wget(
-    `https://raw.githubusercontent.com/oddfell0ws/bitburner/main/src/initHacking.ns?ts=${new Date().getTime()}`,
-    "initHacking.ns"
-  );
-  ns.spawn("initHacking.ns", 1);
-}
-```
-
-3. Exit the nano and write in console: `run start.ns`
+1. Create a new script called `oddfell0ws.js` by issuing the following command: `nano oddfell0ws.js`. Make sure you're on your home server if you're not (you can quickly go home by running `home` in the console).
+2. copy the contents from `oddfell0ws.js` into the file
+3. Exit the nano and write in console: `run oddfell0ws.js`
