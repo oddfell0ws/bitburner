@@ -190,7 +190,7 @@ export const hackThreadsNeededToSteal = (ns, target, percent) => {
     return Math.ceil(percent / ns.hackAnalyze(target));
 };
 export async function main(ns) {
-    const attack = async (hackingNodes, targets) => {
+    const attack = async (hackingNodes, targets, capacity) => {
         const getActionTimes = (target) => {
             const hackTime = ns.getHackTime(target);
             const weakenTime = ns.getWeakenTime(target);
@@ -242,7 +242,7 @@ export async function main(ns) {
             const cyclesNeeded = calculatePrepare(cycles, target);
             if (cyclesNeeded.total === 0 && settings.hwgwBatches.enabled) {
                 // this target is fully prepared. We should initiate a H W G W cycle.
-                batchTargets.push({ batch: createHWGWBatch(ns, target), target });
+                batchTargets.push({ batch: createHWGWBatch(ns, target, capacity), target });
             }
         }
         if (batchTargets.length > 0) {
@@ -353,11 +353,10 @@ export async function main(ns) {
 export function getHackingNodes(servers) {
     return Object.values(servers).filter((s) => s.hasRootAccess);
 }
-function createHWGWBatch(ns, target) {
+function createHWGWBatch(ns, target, capacity) {
+    let harvestPercent = settings.earlyGame.harvestPercent;
     if (capacity > settings.earlyGame.threshhold) {
         let harvestPercent = settings.harvestPercent;
-    } else {
-        let harvestPercent = settings.earlyGame.harvestPercent;
     }
     const hackCycles = hackThreadsNeededToSteal(ns, target.host, harvestPercent);
     const growCycles = Math.ceil(ns.growthAnalyze(target.host, 1 / (1 - harvestPercent)) * settings.hwgwBatches.safetyFactor);
