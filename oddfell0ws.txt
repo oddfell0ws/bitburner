@@ -1,13 +1,13 @@
 {
 	"filesToDownload": [
-		"oddfell0ws/controller.js",
-		"oddfell0ws/privateServers.js",
-        "oddfell0ws/xpfarm.js",
-        "oddfell0ws/attack/weaken.js",
-        "oddfell0ws/attack/hack.js",
-        "oddfell0ws/attack/grow.js",
-        "oddfell0ws/misc/stats.js",
-        "oddfell0ws/misc/hacknetUpgrade.js",
-        "oddfell0ws/misc/hackNet.script"
+		"/oddfell0ws/controller.js",
+		"/oddfell0ws/privateServers.js",
+        "/oddfell0ws/xpfarm.js",
+        "/oddfell0ws/attack/weaken.js",
+        "/oddfell0ws/attack/hack.js",
+        "/oddfell0ws/attack/grow.js",
+        "/oddfell0ws/misc/stats.js",
+        "/oddfell0ws/misc/hacknetUpgrade.js",
+        "/oddfell0ws/misc/hackNet.script"
 	]
 }
