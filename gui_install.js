@@ -8,13 +8,13 @@ let repo = "BitBurner-Scripts";
 let prefixDirectory = '';
 
 // probably no changes here
-let configFileName = 'config.txt';
+let configFileName = '/gui/config.txt';
 let baseURL = 'https://raw.githubusercontent.com/';
 let branch = 'main';
 
 export async function main(ns) {
     let {
-        filesToDownload
+        dependencies
     } = await fetchConfig(ns);
 
     if (ns.getHostname() !== 'home') {
@@ -26,11 +26,11 @@ export async function main(ns) {
         if (prefixDirectory[0] !== '/') prefixDirectory = '/' + prefixDirectory;
     }
 
-    for (let i in filesToDownload) {
-        let filename = filesToDownload[i];
+    for (let i in dependencies) {
+        let filename = dependencies[i];
         try {
             await getFileFromGH(ns, filename);
-            ns.tprint(`Installed: ${filename} [${Number(i)+1}/${filesToDownload.length}]`);
+            ns.tprint(`Installed: ${filename} [${Number(i)+1}/${dependencies.length}]`);
         } catch (e) {
             ns.tprint(`ERROR: tried to download ${filename}: `, e.message);
             throw e;
