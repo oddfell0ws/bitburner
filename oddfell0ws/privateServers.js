@@ -51,9 +51,12 @@ export async function main(ns) {
         }).sort((a, b) => b.totalRam - a.totalRam);
         return countPerStep;
     };
-    const buy = (ram) => {
+    const buy = (ram, count) => {
         if (typeof ram === 'string') {
             ram = parseInt(ram);
+        }
+        if (typeof count === 'string') {
+            count = parseInt(count);
         }
         const step = steps.find(step => step.ram === ram);
         if (!step) {
@@ -61,7 +64,7 @@ export async function main(ns) {
             return;
         }
         let money = ns.getServerMoneyAvailable("home");
-        let serversToBuy = Math.min(limit, Math.floor(money / step.cost));
+        let serversToBuy = Math.min(limit, Math.floor(money / step.cost), count);
         serversToBuy = Math.min(serversToBuy, limit - servers.length);
         for (let i = 0; i < serversToBuy; i++) {
             hostnames.push(ns.purchaseServer(getAvailableHostname(), step.ram));
@@ -71,21 +74,31 @@ export async function main(ns) {
             total: step.cost * serversToBuy,
         };
     };
-    const deleteServers = (ram) => {
+    const deleteServers = (ram, count) => {
         if (typeof ram === 'string') {
             ram = parseInt(ram);
+        }
+        if (typeof count === 'string') {
+            count = parseInt(count);
         }
         const step = steps.find(step => step.ram === ram);
         if (!step) {
             ns.tprint(`Unknown RAM: ${ram}`);
             return;
         }
+        let deleted = 0;
         let serversToDelete = servers.filter(server => server.ram === step.ram);
-        serversToDelete.forEach(server => {
+        serversToDelete.every(server => {
             ns.deleteServer(server.hostname);
+            deleted++;
+            count--;
+            if (count <= 0) {
+                return false;
+            }
+            return true;
         });
         return {
-            count: serversToDelete.length,
+            count: deleted,
         };
     };
     switch (action) {
@@ -110,10 +123,14 @@ export async function main(ns) {
         }
         case "buy": {
             const ram = ns.args[1];
+            let count = ns.args[2];
             if (typeof (ram) === 'boolean') {
                 return;
             }
-            const result = buy(ram);
+            if (typeof (count) !== 'number') {
+                count = 25;
+            }
+            const result = buy(ram, count);
             if (!result) {
                 ns.tprint(`Couldn't buy servers.`);
                 return;
@@ -123,10 +140,14 @@ export async function main(ns) {
         }
         case "delete": {
             const ram = ns.args[1];
+            let count = ns.args[2];
             if (typeof (ram) === 'boolean') {
                 return;
             }
-            const result = deleteServers(ram);
+            if (typeof (count) !== 'number') {
+                count = limit;
+            }
+            const result = deleteServers(ram, count);
             if (!result) {
                 ns.tprint(`Couldn't delete servers.`);
                 return;
