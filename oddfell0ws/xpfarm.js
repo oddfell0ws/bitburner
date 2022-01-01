@@ -2,7 +2,11 @@ const settings = {
     extraSleepTime: 100,
     homeRamReserved: 32,
     expFarmTarget: "joesguns",
-    attackScripts: ["hack.js", "grow.js", "weaken.js"],
+    attackScripts: [
+        "/oddfell0ws/attack/hack.js",
+        "/oddfell0ws/attack/grow.js",
+        "/oddfell0ws/attack/weaken.js"
+    ],
 };
 export async function main(ns) {
     const servers = {};
@@ -78,7 +82,7 @@ export async function main(ns) {
         hackingNodes = hackingNodes.filter(node => node.availableCycles > 0);
         const totalCycles = hackingNodes.reduce((sum, node) => sum + node.availableCycles, 0);
         for (const node of hackingNodes) {
-            executeAttackAction("weaken.js", node.host, settings.expFarmTarget, node.availableCycles, 0);
+            executeAttackAction(settings.attackScripts[2], node.host, settings.expFarmTarget, node.availableCycles, 0);
         }
         ns.tprint(`Exp farming with ${totalCycles} cycles on ${hackingNodes.length} nodes. Waking up in ${ns.tFormat(sleepInterval)}.`);
         await ns.asleep(sleepInterval);
